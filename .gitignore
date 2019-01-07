@@ -1,0 +1,12 @@
+# lock and node_modules
+package-lock.json
+node_modules/
+
+# dotenv file
+variables.env
+
+# bundle files
+*.bundle*
+
+# build
+dist/
