@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 })
 ```
 Crucial point to note here is that, we have used `res.locals` but we could have all used `app.locals`. The main difference in using app is that anything in app.local will set the property of the app gloablly and it can be accessible everywhere.
+
 `index.pug`
 ```pug
 h2 The sum of 2 and 3 is #{h.lodash.add(2, 3)}
