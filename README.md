@@ -1,4 +1,30 @@
-## Making Data Models - `Video 9`
+## Video 6 - `Template Helpers`
+The notion of template helpers is to provide the javascript functions in pug template. We can not only provide functions but objects and modules as well. So, for example, if we want `lodash` module fucntions in our template, we could just export it through a file and set `res.locals` to direct to that file.
+
+`helpers.js`
+```js
+const lodash = require('lodash');
+const moment = require('moment');
+
+exports.lodash = lodash;
+exports.moment = moment;
+```
+
+`app.js`
+```js
+const helpers = require('./helpers')
+// Use a middleware to set the locals
+app.use((req, res, next) => {
+    res.locals.h = helpers
+})
+```
+Crucial point to note here is that, we have used `res.locals` but we could have all used `app.locals`. The main difference in using app is that anything in app.local will set the property of the app gloablly and it can be accessible everywhere.
+`index.pug`
+```pug
+h2 The sum of 2 and 3 is #{h.lodash.add(2, 3)}
+```
+
+## Video 9 - `Making Data Models`
 In video 9 we discussed about creating store models that we'll use to create `stores` and save them in database(mongoDB). This is just a simple code on how to create models(object to store data before adding them in database). Two things are required for this, one is `schema` and other is `model`, both of these will be available via mongoose module. I believe `schema` is like blue-print of our model but exactly why do we use a schema when we can pass structure of our model as an argument? **I don't know right now, more on this later**.
 
 ```js
