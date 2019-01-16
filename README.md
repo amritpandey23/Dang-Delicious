@@ -62,3 +62,39 @@ Let's just see what we have:
 5. `mongoose.Promise = global.Promise`: This sets the Promise of mongoose modules to that environment where it is running. I do not understand the use of it.
 
 > Life was simple with SQL 😌
+
+# Video 8 - `Middlewares`
+Everything in express is achieved via middlewares. On each load of the app, middleware runs itself if it is passed into the app. For example, if there is an image dump site that only accepts .jpg or .png formats, a middleware can be placed in the app before submitting the image that checks format of the image. Everything that makes express special are middlewares. Routes are special kind of middlewares that reacts to the URL and perform tasks.
+
+To create middleware for routes first define the middleware and then pass it into routes:
+
+`myMiddleWareStoreHouse.js`
+```js
+const middleWare1 = (req, res, next) => {
+    req.name = "Amrit"
+    next()
+}
+const middleWare2 = (req, res, next) => {
+    console.log(`Middleware1 was loaded and the name entered was ${req.name}`)
+    next()
+}
+
+exports.middleWare1 = middleWare1
+exports.middleWare2 = middleWare2
+```
+
+`routes/index.js`
+```js
+const middleWareStore = require('./myMiddleWareStoreHouse')
+const router = require('express').Router()
+
+router.use(
+    '/',
+    middleWareStore.middleWare1,
+    middleWareStore.middleWare2,
+    (req, res) => {
+        res.send(`The name requested by middleware was ${req.name}`)
+    }
+)
+```
+As we can see the middleware are sent in a sequence. **next** is function that passes the return of any middle onto the next middle ware. If next is not called, the app will get paused at the same middle ware keep listening to it.
