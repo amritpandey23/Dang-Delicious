@@ -25,6 +25,42 @@ Crucial point to note here is that, we have used `res.locals` but we could have 
 h2 The sum of 2 and 3 is #{h.lodash.add(2, 3)}
 ```
 
+## Video 8 - `Middlewares`
+Everything in express is achieved via middlewares. On each load of the app, middleware runs itself if it is passed into the app. For example, if there is an image dump site that only accepts .jpg or .png formats, a middleware can be placed in the app before submitting the image that checks format of the image. Everything that makes express special are middlewares. Routes are special kind of middlewares that reacts to the URL and perform tasks.
+
+To create middleware for routes first define the middleware and then pass it into routes:
+
+`myMiddleWareStoreHouse.js`
+```js
+const middleWare1 = (req, res, next) => {
+    req.name = "Amrit"
+    next()
+}
+const middleWare2 = (req, res, next) => {
+    console.log(`Middleware1 was loaded and the name entered was ${req.name}`)
+    next()
+}
+
+exports.middleWare1 = middleWare1
+exports.middleWare2 = middleWare2
+```
+
+`routes/index.js`
+```js
+const middleWareStore = require('./myMiddleWareStoreHouse')
+const router = require('express').Router()
+
+router.use(
+    '/',
+    middleWareStore.middleWare1,
+    middleWareStore.middleWare2,
+    (req, res) => {
+        res.send(`The name requested by middleware was ${req.name}`)
+    }
+)
+```
+As we can see the middleware are sent in a sequence. **next** is function that passes the return of any middle onto the next middle ware. If next is not called, the app will get paused at the same middle ware keep listening to it.
+
 ## Video 9 - `Making Data Models`
 In video 9 we discussed about creating store models that we'll use to create `stores` and save them in database(mongoDB). This is just a simple code on how to create models(object to store data before adding them in database). Two things are required for this, one is `schema` and other is `model`, both of these will be available via mongoose module. I believe `schema` is like blue-print of our model but exactly why do we use a schema when we can pass structure of our model as an argument? **I don't know right now, more on this later**.
 
@@ -63,38 +99,3 @@ Let's just see what we have:
 
 > Life was simple with SQL 😌
 
-# Video 8 - `Middlewares`
-Everything in express is achieved via middlewares. On each load of the app, middleware runs itself if it is passed into the app. For example, if there is an image dump site that only accepts .jpg or .png formats, a middleware can be placed in the app before submitting the image that checks format of the image. Everything that makes express special are middlewares. Routes are special kind of middlewares that reacts to the URL and perform tasks.
-
-To create middleware for routes first define the middleware and then pass it into routes:
-
-`myMiddleWareStoreHouse.js`
-```js
-const middleWare1 = (req, res, next) => {
-    req.name = "Amrit"
-    next()
-}
-const middleWare2 = (req, res, next) => {
-    console.log(`Middleware1 was loaded and the name entered was ${req.name}`)
-    next()
-}
-
-exports.middleWare1 = middleWare1
-exports.middleWare2 = middleWare2
-```
-
-`routes/index.js`
-```js
-const middleWareStore = require('./myMiddleWareStoreHouse')
-const router = require('express').Router()
-
-router.use(
-    '/',
-    middleWareStore.middleWare1,
-    middleWareStore.middleWare2,
-    (req, res) => {
-        res.send(`The name requested by middleware was ${req.name}`)
-    }
-)
-```
-As we can see the middleware are sent in a sequence. **next** is function that passes the return of any middle onto the next middle ware. If next is not called, the app will get paused at the same middle ware keep listening to it.

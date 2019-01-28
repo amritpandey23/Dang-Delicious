@@ -69,8 +69,6 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(storeController.myMiddleWare);
-
 // After allllll that above middleware, we finally handle our own routes!
 app.use('/', routes)
 
