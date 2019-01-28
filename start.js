@@ -22,15 +22,8 @@ mongoose.connect(
     }
   }
 )
-// mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
-// mongoose.connection.on('error', (err) => {
-//   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
-// });
-
-// READY?! Let's go!
-
-// Import all our models
-require('./models/store')
+// Setting models via mongoose
+mongoose.model('Store', require('./models/store'))
 
 // Start our app!
 const app = require('./app')
