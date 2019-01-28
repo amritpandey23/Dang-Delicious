@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const slug = require('slugs')
+const slugify = require('slugify')
 
 const storeSchema = new mongoose.Schema({
     name: {
@@ -15,10 +15,9 @@ const storeSchema = new mongoose.Schema({
     tags: [String]
 })
 
-storeSchema.pre('save', next => {
-    if(!this.isModified('name')) return next()
-    this.slug = slug(this.name)
+storeSchema.pre('save', function(next) {
+    this.slug = slugify(this.name)
     next()
 })
 
-module.exports = mongoose.model('Store', storeSchema)
+module.exports = storeSchema
