@@ -99,7 +99,7 @@ Let's just see what we have:
 
 > Life was simple with SQL 😌
 
-##Video 10 - `Creating Mixin in Pug`
+## Video 10 - `Creating Mixin in Pug`
 A *mixin* is a block of code that can be imported and used many times. In our project we have used mixin to create a store form that can be utilised on both `/add` and `/edit` routes. Mixins in pug can be created and imported as follows:
 
 `./views/mixin/_storeForm.pug`
