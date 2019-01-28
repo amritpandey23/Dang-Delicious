@@ -99,3 +99,29 @@ Let's just see what we have:
 
 > Life was simple with SQL 😌
 
+##Video 10 - `Creating Mixin in Pug`
+A *mixin* is a block of code that can be imported and used many times. In our project we have used mixin to create a store form that can be utilised on both `/add` and `/edit` routes. Mixins in pug can be created and imported as follows:
+
+`./views/mixin/_storeForm.pug`
+```pug
+mixin storeForm(store = {})
+    form(action="/route" method="POST")
+        input(placeholder="Enter store name")
+        input(placeholder="Enter store type")
+        input(type="submit")
+```
+
+`./views/editStore.pug`
+```pug
+extends layout
+include mixin/_storeForm
+
+content block
+    h1 This is simple form
+    +storeForm()
+```
+
+**NOTE**: In the video, we have seen web using `POST` method on the form. To get data via the POST form we have to create extra route to handle it. To get post data, use `.post()` method on the routes.
+```js
+app.post('/add', (req, res) => {})
+```
