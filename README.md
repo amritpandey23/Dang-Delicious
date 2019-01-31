@@ -125,3 +125,44 @@ content block
 ```js
 app.post('/add', (req, res) => {})
 ```
+
+## Video 11 - `Saving data to database`
+Until now what mongoose did was connecting to the database in `start.js` file, and load all the models imported, in our case, from `models/store.js` file. Now we will use this pre configured setup to commit and save our data to the database.
+
+*Step 1*: After the json data is recieved via the POST route of `/add`, we will use the request object to save it in the database.
+
+*Step 2*: Import `Mongoose` module and the `Store` model
+`./controllers/storeController.js`
+```js
+const mongoose = require('mongoose')
+const Store = mongoose.model('Store')
+```
+
+*Step 3*: Inside of the addStore handle create a store model object and pass in `req.body`.
+```js
+...
+export.addStore = (req, res) => {
+    const store = Store(req.body)
+}
+```
+`req.body` contains the data in json format that was sent from the form in `/add` route. Since this object already comply with the datatype of each property we can use this as a whole to create the store object.
+
+*Step 4*: Now we have to save the data in the database. The `store` object will by default have a `.save()` method that will commit the data to the database, however it will return a promise, which needs to be resolved. This can be done conventionally with `then()` and `.catch()`:
+```js
+store.save(req.body)
+    .then(() => {
+        console.log('Data saved successfully!')
+    })
+    .catch(err => {
+        console.error(err)
+    })
+```
+But we can also use [Async/Await](https://javascript.info/async-await) which is easier to resolve promises.
+```js
+export.addStore = async (req, res) => {
+    const store = Store(req.body)
+    await store.save()
+    console.log('Datasaved successfully')
+    res.redirect('/')
+}
+```
