@@ -167,3 +167,20 @@ export.addStore = async (req, res) => {
     res.redirect('/')
 }
 ```
+
+## Video 12 - `Flash messages`
+On a successful task completion like saving data to database, the end-user is given a confirmation visually in a form of flashing message on the screen. In our app, whenever the data is collected from the form and stored, the flash message appear on home route giving a confirmation. We have used `connect-flash` package to handle this functionality. Working of flash messages is simple, whatever messages needs to flashed is stored with its category and message in a global object. This object is read everytime when pages render. If some messsages exist in the object it is displayed to the end-user.
+
+To create flash messages just use following code inside the route:
+```js
+req.flash('Success', 'This is a success message')
+```
+`req.flash()` will add a new key, value pair to the `locals.flashes` object. This object is accessible in the `layout.pug` file. Pug can then read all the messages and render them in a nice element.
+
+`./controllers/storeController.js`
+```js
+exports.createStore = async (req, res) => {
+    const store = await (new Store(req.body)).save()
+    req.flash('success', `Sucessfully saved ${req.body.name} to the database`)
+    res.redirect('/')
+}
