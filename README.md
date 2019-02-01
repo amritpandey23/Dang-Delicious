@@ -132,6 +132,7 @@ Until now what mongoose did was connecting to the database in `start.js` file, a
 *Step 1*: After the json data is recieved via the POST route of `/add`, we will use the request object to save it in the database.
 
 *Step 2*: Import `Mongoose` module and the `Store` model
+
 `./controllers/storeController.js`
 ```js
 const mongoose = require('mongoose')
@@ -142,7 +143,7 @@ const Store = mongoose.model('Store')
 ```js
 ...
 export.addStore = (req, res) => {
-    const store = Store(req.body)
+    const store = new Store(req.body)
 }
 ```
 `req.body` contains the data in json format that was sent from the form in `/add` route. Since this object already comply with the datatype of each property we can use this as a whole to create the store object.
@@ -160,7 +161,7 @@ store.save(req.body)
 But we can also use [Async/Await](https://javascript.info/async-await) which is easier to resolve promises.
 ```js
 export.addStore = async (req, res) => {
-    const store = Store(req.body)
+    const store = new Store(req.body)
     await store.save()
     console.log('Datasaved successfully')
     res.redirect('/')
