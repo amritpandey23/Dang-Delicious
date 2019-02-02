@@ -184,3 +184,31 @@ exports.createStore = async (req, res) => {
     req.flash('success', `Sucessfully saved ${req.body.name} to the database`)
     res.redirect('/')
 }
+```
+
+## Video 13 - `Querying database`
+In this video we have *queried* the database to display a list of saved store on the front page and /store route. The store collection saved in database can simply be queried with the corresponding mongoose model, in our case `Store`. So to query all the data inside the collection, you just need to do this:
+```js
+const mongoose = require('mongoose')
+const Store = mongoose.model('Store')
+
+const storeData = Store.find()
+```
+**PITFALL**: `.find()` returns a promise, so we have to handle it. Inside of a route handle, we can just use async await.
+
+`./controllers/storeController.js`
+```js
+exports.getStores = async (req, res) => {
+    const stores = await Store.find() // Returns all the docs in an array
+    res.render('showStores', { title: 'Stores', stores })
+}
+```
+This array is now available inside of pug template.
+
+`./views/showStores.pug`
+```pug
+.store
+    each store in stores
+    h1= store.name
+    p= store.description
+```
