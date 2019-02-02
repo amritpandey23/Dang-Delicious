@@ -14,3 +14,11 @@ exports.createStore = async (req, res) => {
     req.flash('success', `Sucessfully saved ${req.body.name} to the database`)
     res.redirect('/')
 }
+
+exports.getStores = async (req, res) => {
+    const stores = await Store.find()
+    res.render('getStores', {
+        title: 'Stores',
+        stores
+    })
+}
