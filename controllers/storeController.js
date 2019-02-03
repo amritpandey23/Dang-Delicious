@@ -22,3 +22,23 @@ exports.getStores = async (req, res) => {
         stores
     })
 }
+
+exports.editStore = async (req, res) => {
+    // 1. Find store by its id.
+    // 2. send data to the editStore page template
+    const storeId = req.params.id
+    const store = await Store.findOne({ _id: storeId })
+    res.render('editStore', { title: `Edit ${store.name}`, store })
+}
+
+exports.updateStore = async (req, res) => {
+    // 1. update the store details sent via POST request
+    const toUpdateData = req.body
+    const storeId = req.params.id
+    const store = await Store.findOneAndUpdate({ _id: storeId }, toUpdateData, {
+        new: true, // return the new data instead of new one
+        runValidators: true // validate the data to check types and other things.
+    }).exec()
+    req.flash('success', `Details for ${store.name} is update. <a href="/stores/${store.slug}">View Store</a>`)
+    res.redirect(`/stores/${store._id}/edit`)
+}
