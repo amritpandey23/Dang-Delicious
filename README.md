@@ -212,3 +212,30 @@ This array is now available inside of pug template.
     h1= store.name
     p= store.description
 ```
+
+## Video 14 - `Editing Store details`
+In this video we have set an editing flow for editing already existing store data in database. The stores are listed in `/stores` route. Now, we also have an edit button that takes us to `/stores/:id/edit` route. `:id` is actually `req.params.id` which can be read by Express in a route handler. We can utilise id to query the corresponding store data.
+
+`./controllers/storeController.js`
+```js
+exports.editStore = async (req, res) => {
+    const storeId = req.params.id
+    const store = await Store.findOne({ _id: storeId })
+    res.render('editStore', { title: `Edit details for ${store.name}`, store })
+}
+```
+The form on edit store page will now collect the new details and now submit will POST that to `/add/:id`. Thats it! We just need to handle this route and update the data for storeId.
+
+`./controllers/storeController.js`
+```js
+exports.updateData = async (req, res) => {
+    const storeId = req.params.id
+    const store = await Store.findOneAndUpdate({ _id: storeId }, req.body, {
+        new: true,
+        runValidators: true
+    })
+    req.flash('success', `Details for ${store.name} has been updated.`)
+    res.redirect(`/stores/${store._id}/edit`)
+}
+```
+There are some extra options we have passed like `new: true` and `runValidators: true`, the `.findOneAndUpdate()` will still works if we don't pass these options.
