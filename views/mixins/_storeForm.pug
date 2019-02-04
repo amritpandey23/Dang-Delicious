@@ -11,6 +11,7 @@ mixin storeForm(store = {})
 		input(type="text" id="lng" placeholder="Longitude" name="location[coordinates][1]" value=(store.location && store.location.coordinates[1]))
 		- const choices = ['Wifi', 'Family Friendly', 'Open Late', 'Vegeterian', 'Licensed']
 		- const selectedTags = store.tags || []
+		label Theme
 		ul.tags
 			each choice in choices
 				.tag.tag__choice
