@@ -239,3 +239,34 @@ exports.updateData = async (req, res) => {
 }
 ```
 There are some extra options we have passed like `new: true` and `runValidators: true`, the `.findOneAndUpdate()` will still works if we don't pass these options.
+
+## Video 15 - `Saving Lat and Lng data`
+This is a simple step. We just have to update the form to show three more input fields for address, latitude and longitude. Now all these info collected needs to be store in database and `Store` model needs to be updated as well.
+
+`./model/store.js`
+```js
+const storeSchema = new mongoose.Schema({
+    ...
+    location: {
+        type: {
+            type: String,
+            default: 'Point'
+        },
+        coordinates: [{
+            type: Number,
+            required: 'You need to pass them coordinates man!'
+        }],
+        address: {
+            type: String,
+            required: 'Address needs to be supplied'
+        }
+    }
+})
+```
+How we declare location data schema is different. Here we have location object instead of type because location is not a simple data type, it is a data structure that contains coordinates(*Number*) and address(*String*).
+
+After doing this, handle the route for updating the data in database, at this point we know how to do that so we don't need to explain it here.
+
+## Video 16 - `Geocoding with Google Places API`
+Googple Maps provide Places API for getting location info. The address bar in the form listen whenever we type any place name and fetch details of related places in a dropdown menu. We have used this info to append the lng and lat data to their respective input fields.
+> Its all client side javascript, you can handle it pretty well. 😏 
