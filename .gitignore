@@ -16,3 +16,6 @@ dist/
 
 # ide config
 .vscode/
+
+# uploaded images
+uploads/
