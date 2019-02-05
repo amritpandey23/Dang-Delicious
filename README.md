@@ -270,3 +270,75 @@ After doing this, handle the route for updating the data in database, at this po
 ## Video 16 - `Geocoding with Google Places API`
 Googple Maps provide Places API for getting location info. The address bar in the form listen whenever we type any place name and fetch details of related places in a dropdown menu. We have used this info to append the lng and lat data to their respective input fields.
 > Its all client side javascript, you can handle it pretty well. 😏 
+
+## Video 18 - `Uploading store image`
+The upload process to save image of store goes through 3 steps:
+1. Check if the file is image i.e. .png, .jpeg, .jpg
+2. If it is an image file, resize it have to 800px width
+3. Save the file to the disk and commit data to database
+
+**1. Check the file type ✅**
+
+`multer` is an express package that can be used for checking the filetype of any file. We'll use multer to check if file uploaded is an image.
+
+`./controllers/storeController.js`
+```js
+const multer = require('multer')
+const multerOptions = {
+    storage: multer.memoryStorage(),
+    fileFilter: function(req, file, next) {
+        const isPhoto = file.mimetype.startsWith('image/')
+        if (isPhoto) {
+            next(null, true)
+        } else {
+            next({ message: 'That file type is not allowed.' })
+        }
+    }
+}
+// Register this handler
+exports.upload = multer(multerOptions).single('photo')
+```
+`storage`: Multer will use the onboard server memory to hold image file.
+
+`fileFilter`: It is like a middleware which takes in the file and apply various conditions to it. For example, `.psd` is also a valid image file but we only want `.jpg, .png and .jpeg` files. These can checked inside fileFilter function.
+
+`mimetype`: All the multimedia file types on web is characterised with a type that describe it.
+
+`next`: It is not an express middleware next() function. `next()` here is just a callback that should be be triggered after the image file is processed.
+
+**2.Resize the image ✂️**
+
+Once upload handler pushes the image file to the next middleware, we now need to resize it. On the `req.body` object you'll find that, the image is represented as a `Buffer`. We can read this buffer and modify it. To resize the image we will use a nodejs package called `jimp`.
+```js
+const jimp = require('jimp')
+
+exports.resize = async (req, res, next) => {
+    // If no file was passed just quit
+    if (!req.file) return next()
+    // Else if file was passed keep going
+    // Rename the file to a unique name:
+    const extension = req.file.mimetype.split('/')[1]
+    req.body.photo = `${uuid.v4()}.${extension}`
+    // Jimp reads the file and perform changes
+    const pic = await jimp.read(req.file.buffer)
+    await pic.resize(800, jimp.AUTO)
+    await pic.write(`./public/uploads/${req.body.photo}`)
+    // On job completion:
+    return next()
+}
+```
+
+**3. Save image to the database 📥**
+
+Before saving we need to handle route and add and extra `photo` filed in the store schema. Later is easy so I'll not explain it here, but former:
+```js
+app.post('/add',
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.createStore))
+
+app.post('/add:id',
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.createStore))
+```
