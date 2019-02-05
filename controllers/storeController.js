@@ -1,5 +1,18 @@
 const mongoose = require('mongoose')
 const Store = mongoose.model('Store')
+const multer = require('multer')
+
+const multerOptions = {
+    storage: multer.memoryStorage(),
+    fileFilter: function(req, file, next) {
+        const isPhoto = file.mimeType.startsWith('/image')
+        if (isPhoto) {
+            next(null, true)
+        } else {
+            next({ message: 'That file type is not allowed.' })
+        }
+    }
+}
 
 exports.homePage = (req, res) => {
     res.render('index')
@@ -9,10 +22,12 @@ exports.addStore = (req, res) => {
     res.render('editStore', { title: 'Add Stores' })
 }
 
+exports.upload = multer(multerOptions).single('photo')
+
 exports.createStore = async (req, res) => {
     const store = await (new Store(req.body)).save()
     req.flash('success', `Sucessfully saved ${req.body.name} to the database`)
-    res.redirect('/')
+    res.redirect('/stores')
 }
 
 exports.getStores = async (req, res) => {
@@ -32,6 +47,7 @@ exports.editStore = async (req, res) => {
 }
 
 exports.updateStore = async (req, res) => {
+    req.body.location.type = 'Point'
     // 1. update the store details sent via POST request
     const toUpdateData = req.body
     const storeId = req.params.id
