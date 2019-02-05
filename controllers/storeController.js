@@ -1,11 +1,13 @@
 const mongoose = require('mongoose')
 const Store = mongoose.model('Store')
 const multer = require('multer')
-
+const jimp = require('jimp')
+const uuid = require('uuid')
+// Multer config options
 const multerOptions = {
     storage: multer.memoryStorage(),
     fileFilter: function(req, file, next) {
-        const isPhoto = file.mimeType.startsWith('/image')
+        const isPhoto = file.mimetype.startsWith('image/')
         if (isPhoto) {
             next(null, true)
         } else {
@@ -13,31 +15,38 @@ const multerOptions = {
         }
     }
 }
-
+// Handle Home route
 exports.homePage = (req, res) => {
     res.render('index')
 }
-
+// Handle `/add` route
 exports.addStore = (req, res) => {
     res.render('editStore', { title: 'Add Stores' })
 }
+/**
+ * Routes below are used for Creating, Saving, uploading
+ * and uploading data to the database via form.
+ */
 
+// Multer middleware to handle image upload
 exports.upload = multer(multerOptions).single('photo')
-
+exports.resize = async (req, res, next) => {
+    if (!req.file) return next() 
+    const extension = req.file.mimetype.split('/')[1]
+    req.body.photo = `${uuid.v4()}.${extension}`
+    const photoBuffer = req.file.buffer
+    const photo = await jimp.read(photoBuffer)
+    await photo.resize(800, jimp.AUTO)
+    await photo.write(`./public/uploads/${req.body.photo}`)
+    return next()
+}
+// Handle create store for first time.
 exports.createStore = async (req, res) => {
     const store = await (new Store(req.body)).save()
     req.flash('success', `Sucessfully saved ${req.body.name} to the database`)
     res.redirect('/stores')
 }
-
-exports.getStores = async (req, res) => {
-    const stores = await Store.find()
-    res.render('getStores', {
-        title: 'Stores',
-        stores
-    })
-}
-
+// Handle editing already saved store data.
 exports.editStore = async (req, res) => {
     // 1. Find store by its id.
     // 2. send data to the editStore page template
@@ -45,7 +54,7 @@ exports.editStore = async (req, res) => {
     const store = await Store.findOne({ _id: storeId })
     res.render('editStore', { title: `Edit ${store.name}`, store })
 }
-
+// Saving store data after editing.
 exports.updateStore = async (req, res) => {
     req.body.location.type = 'Point'
     // 1. update the store details sent via POST request
@@ -57,4 +66,12 @@ exports.updateStore = async (req, res) => {
     }).exec()
     req.flash('success', `Details for ${store.name} is update. <a href="/stores/${store.slug}">View Store</a>`)
     res.redirect(`/stores/${store._id}/edit`)
+}
+// Display stores saved in database
+exports.getStores = async (req, res) => {
+    const stores = await Store.find()
+    res.render('getStores', {
+        title: 'Stores',
+        stores
+    })
 }
