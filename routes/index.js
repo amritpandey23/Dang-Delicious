@@ -16,6 +16,9 @@ router.get('/stores/:id/edit', catchErrors(storeController.editStore))
 router.post('/add/:id', 
     storeController.upload,
     catchErrors(storeController.resize),
-    catchErrors(storeController.updateStore))
+  catchErrors(storeController.updateStore)
+);
+
+router.get('/stores/:slug', catchErrors(storeController.getStoreBySlug));
 
 module.exports = router
