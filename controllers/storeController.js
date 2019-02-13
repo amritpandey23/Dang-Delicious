@@ -78,7 +78,7 @@ exports.updateStore = async (req, res) => {
       new: true, // return the new data instead of new one
       runValidators: true // validate the data to check types and other things.
     }
-  ).exec();
+  );
   req.flash(
     'success',
     `Details for ${store.name} is update. <a href="/stores/${
