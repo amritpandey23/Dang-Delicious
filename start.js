@@ -18,6 +18,7 @@ require('dotenv').config({
 
 mongoose.connect(
   process.env.DATABASE,
+  { useNewUrlParser: true },
   err => {
     if (err) {
       console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err}`)
